@@ -1,0 +1,1 @@
+import{$ as n,Va as o,Wa as i,cb as a,kb as p}from"./chunk-FOL3V5PG.js";var d=(()=>{class t{static{this.\u0275fac=function(e){return new(e||t)}}static{this.\u0275cmp=n({type:t,selectors:[["app-study-companion"]],standalone:!0,features:[p],decls:2,vars:0,template:function(e,r){e&1&&(o(0,"p"),a(1,"study-companion works!"),i())}})}}return t})();export{d as StudyCompanionComponent};
