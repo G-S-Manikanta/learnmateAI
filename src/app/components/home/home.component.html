@@ -1,0 +1,128 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">Welcome to LearnMate AI</h1>
+    <p class="hero-subtitle">Your AI-powered learning companion for academic success</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" (click)="getStarted()">
+        {{ isAuthenticated ? 'Go to Dashboard' : 'Get Started' }}
+      </button>
+      <button *ngIf="!isAuthenticated" class="btn btn-outline" (click)="navigateToLogin()">
+        Sign In
+      </button>
+    </div>
+  </div>
+  <div class="hero-image">
+    <img src="assets/images/hero-illustration.jpg" alt="Learning illustration" />
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="container">
+    <h2 class="section-title">Why Choose LearnMate AI?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI-Powered Learning</h3>
+        <p>Personalized study plans and intelligent recommendations based on your learning patterns</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Progress Analytics</h3>
+        <p>Detailed insights into your learning progress with comprehensive analytics and reports</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Goal Tracking</h3>
+        <p>Set and achieve your learning goals with smart reminders and milestone tracking</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Study Companion</h3>
+        <p>Interactive AI companion to help you study, answer questions, and provide guidance</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Tutorials Section -->
+<section class="featured-section" *ngIf="!isLoading">
+  <div class="container">
+    <h2 class="section-title">Featured Tutorials</h2>
+    <div class="tutorials-grid">
+      <div class="tutorial-card" *ngFor="let tutorial of featuredTutorials" (click)="navigateToTutorial(tutorial.id)">
+        <div class="tutorial-image">
+          <img [src]="tutorial.thumbnail" [alt]="tutorial.title" />
+          <div class="tutorial-duration">{{ tutorial.estimatedDuration }}min</div>
+        </div>
+        <div class="tutorial-content">
+          <h3>{{ tutorial.title }}</h3>
+          <p>{{ tutorial.description }}</p>
+          <div class="tutorial-meta">
+            <span class="subject">{{ tutorial.subject }}</span>
+            <span class="difficulty" [class]="'difficulty-' + tutorial.difficulty">
+              {{ tutorial.difficulty | titlecase }}
+            </span>
+          </div>
+          <div class="tutorial-rating">
+            <span class="rating">⭐ {{ tutorial.rating }}</span>
+            <span class="ratings-count">({{ tutorial.totalRatings }} reviews)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular Tutorials Section -->
+<section class="popular-section" *ngIf="!isLoading">
+  <div class="container">
+    <h2 class="section-title">Popular Tutorials</h2>
+    <div class="tutorials-list">
+      <div class="tutorial-item" *ngFor="let tutorial of popularTutorials" (click)="navigateToTutorial(tutorial.id)">
+        <div class="tutorial-info">
+          <h4>{{ tutorial.title }}</h4>
+          <p>{{ tutorial.description }}</p>
+          <div class="tutorial-tags">
+            <span class="tag" *ngFor="let tag of tutorial.tags">{{ tag }}</span>
+          </div>
+        </div>
+        <div class="tutorial-stats">
+          <div class="rating">⭐ {{ tutorial.rating }}</div>
+          <div class="duration">{{ tutorial.estimatedDuration }}min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Subjects Section -->
+<section class="subjects-section">
+  <div class="container">
+    <h2 class="section-title">Explore Subjects</h2>
+    <div class="subjects-grid">
+      <div class="subject-card" *ngFor="let subject of subjects" (click)="exploreSubject(subject)">
+        <div class="subject-icon">📚</div>
+        <h3>{{ subject }}</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section" *ngIf="!isAuthenticated">
+  <div class="container">
+    <h2>Ready to Start Learning?</h2>
+    <p>Join thousands of students who are already improving their academic performance with LearnMate AI</p>
+    <button class="btn btn-primary btn-large" (click)="getStarted()">
+      Start Learning Today
+    </button>
+  </div>
+</section>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Loading...</p>
+</div>

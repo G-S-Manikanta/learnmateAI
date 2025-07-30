@@ -1,0 +1,182 @@
+<app-header>    </app-header>
+<div class="dashboard-container" *ngIf="!isLoading">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="greeting">
+        <h1>{{ getGreeting() }}, {{ currentUser?.firstName }}! 👋</h1>
+        <p>Ready to continue your learning journey?</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" routerLink="/study-companion">
+          🤖 AI Companion
+        </button>
+        <button class="btn btn-outline" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Quick Stats -->
+  <section class="quick-stats" *ngIf="studyStats">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">⏱️</div>
+        <div class="stat-content">
+          <h3>{{ formatDuration(studyStats.totalStudyTime) }}</h3>
+          <p>Total Study Time</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-content">
+          <h3>{{ studyStats.studyStreak }}</h3>
+          <p>Current Streak</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-content">
+          <h3>{{ studyStats.completedTutorials }}</h3>
+          <p>Completed</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-content">
+          <h3>{{ studyStats.inProgressTutorials }}</h3>
+          <p>In Progress</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="dashboard-main">
+    <!-- Continue Learning -->
+    <section class="continue-learning">
+      <h2>Continue Learning</h2>
+      <div class="tutorials-grid" *ngIf="recentTutorials.length > 0; else noTutorials">
+        <div class="tutorial-card" *ngFor="let tutorial of recentTutorials">
+          <div class="tutorial-image">
+            <img [src]="tutorial.thumbnail || 'assets/images/default-tutorial.jpg'" 
+                 [alt]="tutorial.title" />
+            <div class="progress-overlay">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 65%"></div>
+              </div>
+              <span class="progress-text">65% Complete</span>
+            </div>
+          </div>
+          <div class="tutorial-content">
+            <h3>{{ tutorial.title }}</h3>
+            <p>{{ tutorial.description }}</p>
+            <div class="tutorial-meta">
+              <span class="subject">{{ tutorial.subject }}</span>
+              <span class="duration">{{ formatDuration(tutorial.estimatedDuration) }}</span>
+            </div>
+            <button class="btn btn-primary btn-sm">Continue</button>
+          </div>
+        </div>
+      </div>
+      <ng-template #noTutorials>
+        <div class="empty-state">
+          <div class="empty-icon">📖</div>
+          <h3>No tutorials in progress</h3>
+          <p>Start a new tutorial to begin your learning journey</p>
+          <button class="btn btn-primary" routerLink="/tutorials">Browse Tutorials</button>
+        </div>
+      </ng-template>
+    </section>
+
+    <!-- Recommended -->
+    <section class="recommended-section">
+      <h2>Recommended for You</h2>
+      <div class="tutorials-list">
+        <div class="tutorial-item" *ngFor="let tutorial of recommendedTutorials">
+          <div class="tutorial-info">
+            <h4>{{ tutorial.title }}</h4>
+            <p>{{ tutorial.description }}</p>
+            <div class="tutorial-tags">
+              <span class="tag" *ngFor="let tag of tutorial.tags">{{ tag }}</span>
+            </div>
+          </div>
+          <div class="tutorial-actions">
+            <div class="rating">⭐ {{ tutorial.rating }}</div>
+            <button class="btn btn-outline btn-sm">Start Learning</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="dashboard-sidebar">
+    <!-- Study Goal -->
+    <div class="widget">
+      <h3>Today's Goal</h3>
+      <div class="goal-progress">
+        <div class="goal-circle">
+          <div class="goal-fill" style="--progress: 60%"></div>
+          <span class="goal-text">60%</span>
+        </div>
+        <div class="goal-info">
+          <p>27 of 45 minutes</p>
+          <span class="goal-remaining">18 minutes remaining</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="widget">
+      <h3>Quick Actions</h3>
+      <div class="action-buttons">
+        <button class="action-btn" routerLink="/tutorials">
+          <span class="action-icon">🔍</span>
+          Browse Tutorials
+        </button>
+        <button class="action-btn" routerLink="/analytics">
+          <span class="action-icon">📊</span>
+          View Analytics
+        </button>
+        <button class="action-btn" routerLink="/study-companion">
+          <span class="action-icon">🤖</span>
+          AI Companion
+        </button>
+        <button class="action-btn" routerLink="/profile">
+          <span class="action-icon">⚙️</span>
+          Settings
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Achievements -->
+    <div class="widget">
+      <h3>Recent Achievements</h3>
+      <div class="achievements">
+        <div class="achievement">
+          <span class="achievement-icon">🏆</span>
+          <div class="achievement-info">
+            <h4>7-Day Streak</h4>
+            <p>Studied for 7 consecutive days</p>
+          </div>
+        </div>
+        <div class="achievement">
+          <span class="achievement-icon">⭐</span>
+          <div class="achievement-info">
+            <h4>Quiz Master</h4>
+            <p>Scored 90%+ on 5 quizzes</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="isLoading">
+  <div class="loading-spinner"></div>
+  <p>Loading your dashboard...</p>
+</div>
+<app-footer></app-footer>

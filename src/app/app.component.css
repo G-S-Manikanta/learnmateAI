@@ -1,0 +1,32 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content.full-height {
+  min-height: 100vh;
+}
+
+/* Global styles for pages */
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+/* Ensure all page components take full height */
+:host ::ng-deep app-dashboard,
+:host ::ng-deep app-analytics,
+:host ::ng-deep app-study-companion,
+:host ::ng-deep app-login,
+:host ::ng-deep app-home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

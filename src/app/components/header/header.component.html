@@ -1,0 +1,182 @@
+<header class="main-header">
+  <div class="header-container">
+    <!-- Logo/App Name -->
+    <div class="logo-section">
+      <div class="logo" routerLink="/dashboard">
+        <span class="logo-icon">🎓</span>
+        <span class="logo-text">LearnMate AI</span>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+      <ul class="nav-list">
+        <li *ngFor="let item of navigationItems" class="nav-item">
+          <a 
+            [routerLink]="item.path" 
+            [class.active]="isActiveRoute(item.path)"
+            class="nav-link"
+            [title]="item.description">
+            <span class="nav-icon">{{ item.icon }}</span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="search-container" [class.expanded]="isSearchExpanded">
+      <button class="search-toggle" (click)="toggleSearch()" type="button">
+        <span class="search-icon">🔍</span>
+      </button>
+      <form (ngSubmit)="onSearch()" class="search-form" [class.visible]="isSearchExpanded">
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          placeholder="Search topics, courses, resources..."
+          class="search-input"
+          name="search">
+        <button type="submit" class="search-submit">
+          <span>→</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-section">
+      <div class="profile-dropdown-container" *ngIf="currentUser">
+        <button 
+          class="profile-button" 
+          (click)="toggleProfileDropdown()"
+          [class.active]="showProfileDropdown">
+          <div class="profile-avatar">
+            <span class="avatar-text">{{ getUserInitials() }}</span>
+          </div>
+          <div class="profile-info">
+            <span class="profile-name">{{ getUserDisplayName() }}</span>
+            <span class="profile-role">{{ currentUser.role | titlecase }}</span>
+          </div>
+          <span class="dropdown-arrow" [class.rotated]="showProfileDropdown">▼</span>
+        </button>
+
+        <!-- Profile Dropdown Menu -->
+        <div class="profile-dropdown" [class.show]="showProfileDropdown">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              <span>{{ getUserInitials() }}</span>
+            </div>
+            <div class="dropdown-info">
+              <h4>{{ getUserDisplayName() }}</h4>
+              <p>{{ currentUser.email }}</p>
+            </div>
+          </div>
+          
+          <div class="dropdown-divider"></div>
+          
+          <ul class="dropdown-menu">
+            <li>
+              <button (click)="navigateToProfile()" class="dropdown-item">
+                <span class="item-icon">👤</span>
+                <span>My Profile</span>
+              </button>
+            </li>
+            <li>
+              <button (click)="navigateToSettings()" class="dropdown-item">
+                <span class="item-icon">⚙️</span>
+                <span>Settings</span>
+              </button>
+            </li>
+            <li>
+              <button routerLink="/help" class="dropdown-item" (click)="showProfileDropdown = false">
+                <span class="item-icon">❓</span>
+                <span>Help & Support</span>
+              </button>
+            </li>
+          </ul>
+          
+          <div class="dropdown-divider"></div>
+          
+          <button (click)="logout()" class="dropdown-item logout-item">
+            <span class="item-icon">🚪</span>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Login button for non-authenticated users -->
+      <div *ngIf="!currentUser" class="auth-section">
+        <button routerLink="/login" class="login-btn">
+          <span>Login</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+      <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+      <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+      <span class="hamburger-line" [class.active]="isMenuOpen"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Navigation Menu -->
+  <div class="mobile-nav" [class.open]="isMenuOpen">
+    <div class="mobile-nav-content">
+      <!-- Mobile Search -->
+      <div class="mobile-search">
+        <form (ngSubmit)="onSearch()" class="mobile-search-form">
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery"
+            placeholder="Search..."
+            class="mobile-search-input"
+            name="mobileSearch">
+          <button type="submit" class="mobile-search-btn">🔍</button>
+        </form>
+      </div>
+
+      <!-- Mobile Navigation Items -->
+      <ul class="mobile-nav-list">
+        <li *ngFor="let item of navigationItems" class="mobile-nav-item">
+          <a 
+            [routerLink]="item.path" 
+            [class.active]="isActiveRoute(item.path)"
+            class="mobile-nav-link"
+            (click)="isMenuOpen = false">
+            <span class="mobile-nav-icon">{{ item.icon }}</span>
+            <div class="mobile-nav-text">
+              <span class="mobile-nav-label">{{ item.label }}</span>
+              <span class="mobile-nav-desc">{{ item.description }}</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Mobile Profile Section -->
+      <div class="mobile-profile" *ngIf="currentUser">
+        <div class="mobile-profile-info">
+          <div class="mobile-avatar">{{ getUserInitials() }}</div>
+          <div class="mobile-user-info">
+            <h4>{{ getUserDisplayName() }}</h4>
+            <p>{{ currentUser.email }}</p>
+          </div>
+        </div>
+        
+        <div class="mobile-profile-actions">
+          <button (click)="navigateToProfile(); isMenuOpen = false" class="mobile-action-btn">
+            <span>👤</span> Profile
+          </button>
+          <button (click)="navigateToSettings(); isMenuOpen = false" class="mobile-action-btn">
+            <span>⚙️</span> Settings
+          </button>
+          <button (click)="logout(); isMenuOpen = false" class="mobile-action-btn logout">
+            <span>🚪</span> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" [class.active]="isMenuOpen" (click)="isMenuOpen = false"></div>
+</header>

@@ -1,0 +1,376 @@
+
+<div class="analytics-dashboard">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <h1 class="page-title">📊 Learning Analytics</h1>
+    <div class="time-range-selector">
+      <button 
+        *ngFor="let range of timeRanges" 
+        [class.active]="selectedTimeRange === range"
+        (click)="changeTimeRange(range)"
+        class="time-btn">
+        {{ range | titlecase }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading your analytics...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <div class="error-message">
+      <span class="error-icon">⚠️</span>
+      <p>{{ error }}</p>
+      <button (click)="loadAnalyticsData()" class="retry-btn">Retry</button>
+    </div>
+  </div>
+
+  <!-- Main Analytics Content -->
+  <div *ngIf="!isLoading && !error && analyticsData" class="analytics-content">
+    
+    <!-- Key Performance Indicators -->
+    <section class="kpi-section">
+      <h2>📈 Weekly Performance Overview</h2>
+      <div class="kpi-grid">
+        <div class="kpi-card performance-card">
+          <div class="kpi-header">
+            <span class="kpi-icon">⏱️</span>
+            <h3>This Week</h3>
+          </div>
+          <div class="kpi-value">{{ formatStudyTime(currentWeekPerformance) }}</div>
+          <div class="kpi-change" [class]="getPerformanceChangeClass()">
+            <span class="change-icon">{{ getPerformanceChangeIcon() }}</span>
+            <span>{{ performanceChange | number:'1.1-1' }}% vs last week</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-icon">🎯</span>
+            <h3>Overall Score</h3>
+          </div>
+          <div class="kpi-value">{{ analyticsData.performanceMetrics.overallScore }}%</div>
+          <div class="kpi-subtitle">Average performance</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-icon">🔥</span>
+            <h3>Study Streak</h3>
+          </div>
+          <div class="kpi-value">{{ analyticsData.studyStats.studyStreak }}</div>
+          <div class="kpi-subtitle">days in a row</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-icon">📚</span>
+            <h3>Completed</h3>
+          </div>
+          <div class="kpi-value">{{ analyticsData.studyStats.completedTutorials }}</div>
+          <div class="kpi-subtitle">tutorials finished</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Learning Curve Chart -->
+    <section class="chart-section">
+      <h2>📊 Learning Curve Progress</h2>
+      <div class="chart-container">
+        <div class="chart-header">
+          <h3>Performance Improvement Over Time</h3>
+          <div class="chart-legend">
+            <span class="legend-item">
+              <span class="legend-color learning-curve"></span>
+              Average Score
+            </span>
+          </div>
+        </div>
+        <div class="learning-curve-chart">
+          <div class="chart-grid">
+            <div class="chart-bars">
+              <div 
+                *ngFor="let data of learningCurveData" 
+                class="bar-container">
+                <div 
+                  class="learning-bar" 
+                  [style.height.%]="data.score">
+                  <span class="bar-value">{{ data.score | number:'1.0-0' }}%</span>
+                </div>
+                <span class="bar-label">{{ data.week }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Topic-wise Strength and Weakness -->
+    <section class="topics-section">
+      <h2>🎯 Subject Performance Analysis</h2>
+      <div class="topics-grid">
+        <div class="topic-strengths">
+          <h3>💪 Subject Strengths & Weaknesses</h3>
+          <div class="strength-bars">
+            <div 
+              *ngFor="let topic of topicStrengthData" 
+              class="strength-item">
+              <div class="strength-header">
+                <span class="subject-name">{{ topic.subject }}</span>
+                <span class="strength-score">{{ topic.strength }}%</span>
+              </div>
+              <div class="strength-bar-container">
+                <div 
+                  class="strength-bar" 
+                  [style.width.%]="topic.strength"
+                  [class]="topic.strength >= 80 ? 'strong' : topic.strength >= 60 ? 'moderate' : 'weak'">
+                </div>
+              </div>
+              <div class="study-time-info">
+                <small>Study time: {{ formatStudyTime(topic.studyTime) }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top 3 Revision Topics -->
+        <div class="revision-topics">
+          <h3>🔄 Top 3 Topics to Revise</h3>
+          <div class="revision-cards">
+            <div 
+              *ngFor="let topic of topRevisionTopics; let i = index" 
+              class="revision-card"
+              [class]="'priority-' + (i + 1)">
+              <div class="revision-rank">{{ i + 1 }}</div>
+              <div class="revision-content">
+                <h4>{{ topic.subject }}</h4>
+                <div class="revision-stats">
+                  <span class="score">{{ topic.averageScore }}% avg</span>
+                  <span class="progress">{{ topic.progressPercentage }}% complete</span>
+                </div>
+                <div class="next-steps">
+                  <strong>Next:</strong>
+                  <ul>
+                    <li *ngFor="let step of topic.recommendedNextSteps">{{ step }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Study Time Analytics -->
+    <section class="time-section">
+      <h2>⏰ Study Time Analysis</h2>
+      <div class="time-analytics-grid">
+        <div class="study-pattern-card">
+          <h3>🕐 Study Pattern</h3>
+          <div class="pattern-display">
+            <div class="pattern-text">{{ getStudyPatternText() }}</div>
+            <div class="peak-hours">
+              <strong>Peak Study Hours:</strong>
+              <div class="hours-list">
+                <span 
+                  *ngFor="let hour of analyticsData.timeAnalytics.peakStudyHours" 
+                  class="hour-badge">
+                  {{ hour }}:00
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="session-stats-card">
+          <h3>📊 Session Statistics</h3>
+          <div class="session-stats">
+            <div class="stat-item">
+              <span class="stat-label">Total Sessions</span>
+              <span class="stat-value">{{ analyticsData.studyStats.totalSessions }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Avg Session</span>
+              <span class="stat-value">{{ analyticsData.studyStats.averageSessionDuration }}min</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Total Study Time</span>
+              <span class="stat-value">{{ formatStudyTime(analyticsData.studyStats.totalStudyTime) }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Longest Streak</span>
+              <span class="stat-value">{{ analyticsData.studyStats.longestStreak }} days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiz Results and Feedback -->
+    <section class="quiz-section">
+      <h2>🧪 Test & Quiz Performance</h2>
+      <div class="quiz-analytics">
+        <div class="quiz-summary">
+          <div class="quiz-stat">
+            <span class="quiz-icon">✅</span>
+            <div class="quiz-info">
+              <div class="quiz-number">{{ analyticsData.performanceMetrics.totalQuizzesPassed }}</div>
+              <div class="quiz-label">Quizzes Passed</div>
+            </div>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-icon">📝</span>
+            <div class="quiz-info">
+              <div class="quiz-number">{{ analyticsData.performanceMetrics.totalQuizzesTaken }}</div>
+              <div class="quiz-label">Total Attempts</div>
+            </div>
+          </div>
+          <div class="quiz-stat">
+            <span class="quiz-icon">🎯</span>
+            <div class="quiz-info">
+              <div class="quiz-number">{{ analyticsData.performanceMetrics.averageQuizScore }}%</div>
+              <div class="quiz-label">Average Score</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="improvement-feedback">
+          <h3>🚀 AI-Generated Feedback</h3>
+          <div class="feedback-cards">
+            <div class="feedback-card positive">
+              <span class="feedback-icon">👍</span>
+              <div class="feedback-content">
+                <h4>Strengths</h4>
+                <ul>
+                  <li *ngFor="let subject of analyticsData.performanceMetrics.strongSubjects">
+                    Excellent progress in {{ subject }}
+                  </li>
+                  <li>Consistent study schedule with {{ analyticsData.studyStats.studyStreak }} day streak</li>
+                </ul>
+              </div>
+            </div>
+            <div class="feedback-card improvement">
+              <span class="feedback-icon">💡</span>
+              <div class="feedback-content">
+                <h4>Areas for Improvement</h4>
+                <ul>
+                  <li *ngFor="let subject of analyticsData.performanceMetrics.weakSubjects">
+                    Focus more practice on {{ subject }}
+                  </li>
+                  <li>Consider increasing session duration from {{ analyticsData.studyStats.averageSessionDuration }}min to 60min</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Achievements and Badges -->
+    <section class="achievements-section">
+      <h2>🏆 Achievements & Study Game Badges</h2>
+      <div class="achievements-grid">
+        <div class="badges-container">
+          <h3>🎖️ Recent Badges</h3>
+          <div class="badges-list">
+            <div 
+              *ngFor="let badge of analyticsData.learningProgress.badges" 
+              class="badge-card">
+              <div class="badge-icon">{{ badge.icon }}</div>
+              <div class="badge-info">
+                <h4>{{ badge.name }}</h4>
+                <p>{{ badge.description }}</p>
+                <small>Earned: {{ badge.earnedAt | date:'MMM dd, yyyy' }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="achievements-container">
+          <h3>🎯 Achievements</h3>
+          <div class="achievements-list">
+            <div 
+              *ngFor="let achievement of analyticsData.learningProgress.achievements" 
+              class="achievement-card">
+              <div class="achievement-icon">{{ achievement.icon }}</div>
+              <div class="achievement-info">
+                <h4>{{ achievement.title }}</h4>
+                <p>{{ achievement.description }}</p>
+                <div class="achievement-points">+{{ achievement.points }} XP</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <h3>📈 Level Progress</h3>
+          <div class="level-progress">
+            <div class="current-level">
+              <span class="level-badge">{{ analyticsData.learningProgress.currentLevel | titlecase }}</span>
+              <div class="xp-info">{{ analyticsData.learningProgress.experiencePoints }} XP</div>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar">
+                <div 
+                  class="progress-fill" 
+                  [style.width.%]="analyticsData.learningProgress.nextLevelProgress">
+                </div>
+              </div>
+              <div class="progress-text">{{ analyticsData.learningProgress.nextLevelProgress }}% to next level</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Previous Attempts Comparison -->
+    <section class="comparison-section">
+      <h2>📊 Performance Comparison</h2>
+      <div class="comparison-container">
+        <div class="comparison-chart">
+          <h3>📈 Weekly Study Time Trend</h3>
+          <div class="weekly-chart">
+            <div class="chart-bars-horizontal">
+              <div 
+                *ngFor="let week of weeklyPerformanceData" 
+                class="week-bar-container">
+                <div class="week-label">{{ week.week }}</div>
+                <div class="week-bar-wrapper">
+                  <div 
+                    class="week-bar" 
+                    [style.width.%]="(week.studyTime / 400) * 100">
+                    <span class="week-value">{{ formatStudyTime(week.studyTime) }}</span>
+                  </div>
+                </div>
+                <div class="week-days">{{ week.activeDays }} days</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="improvement-metrics">
+          <h3>📊 Improvement Metrics</h3>
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-value positive">+{{ analyticsData.performanceMetrics.improvementRate }}%</div>
+              <div class="metric-label">Overall Improvement</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ (analyticsData.performanceMetrics.totalQuizzesPassed / analyticsData.performanceMetrics.totalQuizzesTaken * 100) | number:'1.0-0' }}%</div>
+              <div class="metric-label">Success Rate</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">{{ analyticsData.studyStats.studyStreak }}/{{ analyticsData.studyStats.longestStreak }}</div>
+              <div class="metric-label">Current/Best Streak</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>

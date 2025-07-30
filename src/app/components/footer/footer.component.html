@@ -1,0 +1,164 @@
+<footer class="main-footer">
+  <div class="footer-container">
+    <!-- Top Section -->
+    <div class="footer-top">
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h4 class="footer-title">Quick Links</h4>
+        <ul class="footer-links">
+          <li *ngFor="let link of quickLinks" class="footer-link-item">
+            <a [routerLink]="link.path" class="footer-link">
+              <span class="link-icon">{{ link.icon }}</span>
+              <span class="link-text">{{ link.label }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Learning Resources -->
+      <div class="footer-section">
+        <h4 class="footer-title">Learning</h4>
+        <ul class="footer-links">
+          <li class="footer-link-item">
+            <a routerLink="/courses" class="footer-link">
+              <span class="link-icon">📚</span>
+              <span class="link-text">Browse Courses</span>
+            </a>
+          </li>
+          <li class="footer-link-item">
+            <a routerLink="/tutorials" class="footer-link">
+              <span class="link-icon">🎓</span>
+              <span class="link-text">Free Tutorials</span>
+            </a>
+          </li>
+          <li class="footer-link-item">
+            <a routerLink="/blog" class="footer-link">
+              <span class="link-icon">📝</span>
+              <span class="link-text">Learning Blog</span>
+            </a>
+          </li>
+          <li class="footer-link-item">
+            <a routerLink="/community" class="footer-link">
+              <span class="link-icon">👥</span>
+              <span class="link-text">Community</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Motivation Section -->
+      <div class="footer-section motivation-section">
+        <h4 class="footer-title">Stay Motivated!</h4>
+        <div class="motivation-content">
+          <div class="quote-container">
+            <p class="motivational-quote">{{ currentQuote }}</p>
+          </div>
+          <div class="streak-info">
+            <div class="streak-badge">
+              <span class="streak-icon">🔥</span>
+              <div class="streak-text">
+                <span class="streak-number">{{ studyStreak }}</span>
+                <span class="streak-label">day streak!</span>
+              </div>
+            </div>
+            <p class="streak-message">Keep going!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Social & Newsletter -->
+      <div class="footer-section">
+        <h4 class="footer-title">Connect</h4>
+        <div class="social-links">
+          <a 
+            *ngFor="let social of socialLinks" 
+            [href]="social.url" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="social-link"
+            [title]="social.label">
+            <span class="social-icon">{{ social.icon }}</span>
+          </a>
+        </div>
+        
+        <div class="newsletter-section">
+          <p class="newsletter-text">Get weekly learning tips!</p>
+          <form class="newsletter-form" (ngSubmit)="$event.preventDefault()">
+            <input 
+              type="email" 
+              placeholder="Enter your email"
+              class="newsletter-input">
+            <button type="submit" class="newsletter-btn">
+              <span>Subscribe</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="footer-divider"></div>
+
+    <!-- Bottom Section -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <div class="footer-logo">
+          <span class="footer-logo-icon">🎓</span>
+          <span class="footer-logo-text">LearnMate AI</span>
+        </div>
+        <p class="copyright">
+          © {{ currentYear }} LearnMate AI. All rights reserved.
+        </p>
+      </div>
+
+      <div class="footer-bottom-right">
+        <div class="footer-actions">
+          <button (click)="scrollToTop()" class="scroll-top-btn" title="Back to top">
+            <span class="scroll-icon">↑</span>
+          </button>
+          
+          <div class="language-selector">
+            <button class="language-btn">
+              <span class="language-icon">🌐</span>
+              <span class="language-text">English</span>
+              <span class="language-arrow">▼</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Footer -->
+  <div class="mobile-footer">
+    <div class="mobile-footer-content">
+      <div class="mobile-motivation">
+        <p class="mobile-quote">{{ currentQuote }}</p>
+        <div class="mobile-streak">
+          <span class="mobile-streak-icon">🔥</span>
+          <span class="mobile-streak-text">{{ studyStreak }} day streak!</span>
+        </div>
+      </div>
+      
+      <div class="mobile-links">
+        <a *ngFor="let link of quickLinks.slice(0, 3)" [routerLink]="link.path" class="mobile-footer-link">
+          <span class="mobile-link-icon">{{ link.icon }}</span>
+          <span class="mobile-link-text">{{ link.label }}</span>
+        </a>
+      </div>
+      
+      <div class="mobile-footer-bottom">
+        <div class="mobile-social">
+          <a 
+            *ngFor="let social of socialLinks" 
+            [href]="social.url" 
+            target="_blank"
+            class="mobile-social-link">
+            {{ social.icon }}
+          </a>
+        </div>
+        <p class="mobile-copyright">© {{ currentYear }} LearnMate AI</p>
+      </div>
+    </div>
+  </div>
+</footer>
