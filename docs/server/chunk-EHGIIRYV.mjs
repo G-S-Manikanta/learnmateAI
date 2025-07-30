@@ -1,2 +1,0 @@
-import './polyfills.server.mjs';
-import{Va as o,Wa as i,X as n,cb as a,kb as p}from"./chunk-BY6U2KO6.mjs";import"./chunk-VVCT4QZE.mjs";var d=(()=>{class t{static{this.\u0275fac=function(e){return new(e||t)}}static{this.\u0275cmp=n({type:t,selectors:[["app-study-companion"]],standalone:!0,features:[p],decls:2,vars:0,template:function(e,r){e&1&&(o(0,"p"),a(1,"study-companion works!"),i())}})}}return t})();export{d as StudyCompanionComponent};
